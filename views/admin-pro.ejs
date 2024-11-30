@@ -1,0 +1,79 @@
+<%- include('./partials/header'); %>
+
+<body class="bg-gray-100">
+    <div class="flex flex-col min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold text-gray-900">Product Management</h1>
+            </div>
+        </header>
+
+        <!-- Main content -->
+        <main class="flex-1 overflow-y-auto">
+            <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                <!-- Search Bar -->
+                <div class="mb-6">
+                    <form id="searchForm" class="flex">
+                        <input type="text" id="product_id" name="product_id" placeholder="Search by Product ID"
+                            class="w-full p-2 border border-gray-300 rounded-l">
+                        <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-r hover:bg-indigo-700">
+                            Search
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Search Result (Initially hidden) -->
+                <div id="searchResult" class="bg-white shadow rounded-lg mb-6 p-6" style="display: none;">
+                    <h2 class="text-2xl font-semibold text-gray-800">Search Result</h2>
+                    <div id="productDetails" class="bg-gray-50 p-4 rounded-lg shadow">
+                        <!-- Product details will be populated here by fetch -->
+                    </div>
+                </div>
+
+                <!-- Error message -->
+                <div id="noProduct" class="bg-white shadow rounded-lg mb-6 p-6" style="display: none;">
+                    <h2 class="text-2xl font-semibold text-gray-800">No Product Found</h2>
+                </div>
+
+            </div>
+        </main>
+    </div>
+<script>
+    // Handling form submission and fetch
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent page reload
+
+        const productId = document.getElementById('product_id').value; // No '#' for IDs
+
+        fetch(`/products/search?product_id=${productId}`, {
+            method: 'GET',
+        })
+        .then(response => response.json()) // Parse the JSON from the response
+        .then(data => {
+          console.log('data',data);
+            if (data.found) {
+                document.getElementById('searchResult').style.display = 'block';
+                document.getElementById('noProduct').style.display = 'none';
+
+                // Populate product details
+                document.getElementById('productDetails').innerHTML = `
+                    <img class="w-32 h-32 mb-3" src="data:image/png;base64,${data.product.image}" alt="">
+                    <h3 class="text-lg font-medium text-gray-900">${data.product.name}</h3>
+                    <p class="mt-2 text-gray-600">Price: ${data.product.price}</p>
+                    <p class="mt-2 text-gray-600">Stock: ${data.product.stocks}</p>
+                    <p class="mt-2 text-gray-600">${data.product.description}</p>
+                    <p class="mt-2 text-sm text-gray-500">Product ID: ${data.product._id}</p>
+                `;
+            } else {
+                document.getElementById('searchResult').style.display = 'none';
+                document.getElementById('noProduct').style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+</body>
+    <%- include('./partials/footer'); %>
