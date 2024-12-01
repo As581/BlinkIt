@@ -11,7 +11,7 @@ async function validateAdmin(req, res, next) {
     }
 
     // Verify token and decode it
-    let data = await jwt.verify(token, "hh");
+    let data = await jwt.verify(token, process.env.JWT_SECRET);
     req.user = data; // Attach the decoded token data (like email) to req.user
 
     next(); // Proceed to the next middleware or route
