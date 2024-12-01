@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb+srv://av0232016:6CUKKHITgEOatspJ@blink.jacpt.mongodb.net/?retryWrites=true&w=majority&appName=Blink', {
+    await mongoose.connect(process.env.MONGO_URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
