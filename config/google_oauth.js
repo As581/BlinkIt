@@ -4,9 +4,9 @@ const passport = require('passport');
 const redisClient = require('./RedisConfig'); // Import Redis client
 
 passport.use(new GoogleStrategy({
-    clientID: process.env.ClIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: process.env.CALLBACK_URL,
+    clientID: process.env.GOOGLE_ClIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: '/auth/google/callback',
   },
   async function (accessToken, refreshToken, profile, cb) {
     try {
