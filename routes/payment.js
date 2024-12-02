@@ -7,8 +7,8 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
 const razorpay = new Razorpay({
-  key_id: 'rzp_test_MpHUxClOLk736E',
-  key_secret: 'L4AOuZFHgrP1re36wzHML76C',
+  key_id: process.env.KEY_ID,
+  key_secret: process.env.KEY_SECRET,
 });
 router.post('/create/orderId', async (req, res) => {
   /*let cart = await cartModel.findOne();
