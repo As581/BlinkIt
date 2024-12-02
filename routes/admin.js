@@ -8,21 +8,37 @@ const jwt = require('jsonwebtoken');
 const { validateAdmin }= require('../middlewares/admin');
 
 // Route to create an admin
-router.get('/create', async (req, res) => {
+router.post('/create', async (req, res) => {
   try {
-    let salt = await bcrypt.genSalt(10);
-    let hash = await bcrypt.hash("devil", salt);
+    const { name, email, password, role } = req.body;
 
-    let admin = new adminModel({
-      name: "devil",
-      email: "devil@blink.com",
+    if (!name || !email || !password || !role) {
+      return res.status(400).send("All fields are required");
+    }
+
+    const existingAdmin = await adminModel.findOne({ email });
+    if (existingAdmin) {
+      return res.status(400).send("Admin with this email already exists");
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+
+    const admin = new adminModel({
+      name,
+      email,
       password: hash,
-      role: "admin",
+      role,
     });
 
     await admin.save();
 
-    let token = jwt.sign({ email: admin.email, admin: true }, process.env.JWT_SECRET || "hh", { expiresIn: '1h' });
+    const token = jwt.sign(
+      { email: admin.email, admin: true },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
     res.cookie("token", token);
     res.send("Admin created successfully");
   } catch (err) {
@@ -30,6 +46,7 @@ router.get('/create', async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
 
 // Render login page
 router.get('/login', (req, res) => {
