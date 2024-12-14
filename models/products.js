@@ -15,7 +15,7 @@ const productSchema =  mongoose.Schema({
         required: true,// Stock is required
     },
     description: String, // Optional field
-    image: Buffer, // Image stored as a Buffer
+    image: String, // Image stored as a String
     category: {
         type: String,
         required: true, // Category is required
