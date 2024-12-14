@@ -6,7 +6,7 @@ require('dotenv').config();
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID, // Ensure spelling is correct
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/auth/google/callback',
+    callbackURL: 'https://blinkit-kc9u.onrender.com//auth/google/callback',
   },
   async function (accessToken, refreshToken, profile, cb) {
     try {
