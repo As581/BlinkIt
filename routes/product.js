@@ -4,6 +4,7 @@ const { productModel,validateProduct } = require('../models/products');
 const { categoryModel,validateCategory } = require('../models/category');
 const { cartModel,validateCart} = require('../models/cart');
 const upload = require('../config/multer_config');
+const cloudinary = require('../config/cloudinary');
 const { validateAdmin ,userIsLoggedIn}= require('../middlewares/admin');
 
 router.get('/',userIsLoggedIn,async(req,res)=>{
@@ -160,11 +161,9 @@ router.get('/delete/:id',validateAdmin,async (req,res)=>{
   }
 });*/
 
-router.post('/', upload.single("image"), async (req, res) => {
+/*2router.post('/', upload.single("image"), async (req, res) => {
   try {
     let { name, price, stocks, description, category } = req.body;
-
-    // Validate the input using the schema
     let { error } = validateProduct({
       name,
       price,
@@ -173,25 +172,22 @@ router.post('/', upload.single("image"), async (req, res) => {
       category
     });
 
-    // If there's a validation error, send it back
     if (error) {
-      req.flash('error', error.messages); // flash error message
+      req.flash('error', error.messages);
       return res.status(400).redirect("back");
     }
 
-    // Check if the category exists, if not create a new one
     let isCategory = await categoryModel.findOne({ name: category });
     if (!isCategory) {
       isCategory = await categoryModel.create({ name: category });
     }
-
-    // Create the product and assign the category ID
+    
     let product = await productModel.create({
       name,
       price,
       stocks,
       description,
-      image: req.file ? req.file.buffer : null, // Handle file upload
+      image: req.file ? req.file.buffer : null,
       category,
     });
 
@@ -206,6 +202,56 @@ router.post('/', upload.single("image"), async (req, res) => {
     req.flash('error', 'Server Error');
     res.status(500).redirect("back");
   }
+});*/
+
+router.post('/', upload.single('image'), async (req, res) => {
+  try {
+    const { name, price, stocks, description, category } = req.body;
+
+    if (!name || !price || !stocks || !description || !category || !req.file) {
+      req.flash('error', 'All fields, including an image, are required.');
+      return res.status(400).redirect('back');
+    }
+
+    const uploadResult = await cloudinary.uploader.upload_stream(
+      {
+        folder: 'products',
+        resource_type: 'image',
+      },
+      async (error, result) => {
+        if (error) {
+          console.error('Cloudinary upload error:', error);
+          req.flash('error', 'Image upload failed.');
+          return res.status(500).redirect('back');
+        }
+        let isCategory = await categoryModel.findOne({ name: category });
+        if (!isCategory) {
+          isCategory = await categoryModel.create({ name: category });
+        }
+
+        // Create Product
+        const product = await productModel.create({
+          name,
+          price,
+          stocks,
+          description,
+          image: result.secure_url, // Cloudinary public URL
+          category: isCategory._id,
+        });
+
+        req.flash('success', 'Product created successfully!');
+        return res.redirect('back');
+      }
+    );
+
+    uploadResult.end(req.file.buffer);
+  } catch (err) {
+    console.error(err.message);
+    req.flash('error', 'Server error!');
+    res.status(500).redirect('back');
+  }
 });
+
+
 
 module.exports = router;
