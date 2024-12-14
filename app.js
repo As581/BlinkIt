@@ -22,6 +22,7 @@ connectDB();
 require('dotenv').config();
 require('./config/google_oauth');
 require('./config/RedisConfig');
+require('./config/cloudinary');
 
 app.set('view engine','ejs');
 app.use(express.json());
