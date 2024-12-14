@@ -2,7 +2,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { userModel } = require('../models/user');
 const passport = require('passport');
 const redisClient = require('./RedisConfig'); // Import Redis client
-
+require('dotenv').config();
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_ClIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
