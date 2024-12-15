@@ -39,7 +39,7 @@ router.post('/create', async (req, res) => {
 
     const token = jwt.sign(
       { email: admin.email, admin: true },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || "hh",
       { expiresIn: '1h' }
     );
 
@@ -72,7 +72,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).send("Invalid credentials");
     }
 
-    let token = jwt.sign({ email: admin.email, admin: true }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    let token = jwt.sign({ email: admin.email, admin: true }, process.env.JWT_SECRET || "hh", { expiresIn: '1h' });
     res.cookie("token", token, { httpOnly: true });
     res.redirect("/admin/dashboard");
   } catch (err) {
