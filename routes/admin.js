@@ -10,7 +10,7 @@ const { validateAdmin }= require('../middlewares/admin');
 // Route to create an admin
 router.get('/create',(req,res)=>{
      res.render("adminRegister");
-  );
+});
 router.post('/create', async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
