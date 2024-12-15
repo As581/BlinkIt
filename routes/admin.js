@@ -13,6 +13,7 @@ router.get('/create',(req,res)=>{
 });
 router.post('/create', async (req, res) => {
   try {
+       console.log("Request Body",req.body);
     const { name, email, password, role } = req.body;
 
     if (!name || !email || !password || !role) {
