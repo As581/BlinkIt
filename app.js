@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-//const indexRouter = require('./routes/index');
+const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const adminRouter = require('./routes/admin');
 const productRouter = require('./routes/product');
@@ -43,7 +43,7 @@ app.use((req, res, next) => {
   res.locals.messages = req.flash();
   next();
 });
-//app.use('/',indexRouter);
+app.use('/',indexRouter);
 app.use('/auth',authRouter);
 app.use('/admin',adminRouter);
 app.use('/products',productRouter);
@@ -52,9 +52,9 @@ app.use('/cart',cartRouter);
 app.use('/payment',paymentRouter);
 app.use('/order',orderRouter);
 
-app.use('*',(req, res) => {
+app.use((req, res) => {
   res.send('404')
-})
+});
 
 app.listen(process.env.PORT || 3002,()=>{
     console.log("Server is connected");
