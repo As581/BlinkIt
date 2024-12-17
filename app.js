@@ -52,9 +52,9 @@ app.use('/cart',cartRouter);
 app.use('/payment',paymentRouter);
 app.use('/order',orderRouter);
 
-/*app.use((req, res) => {
+app.use('*',(req, res) => {
   res.send('404')
-})*/
+})
 
 app.listen(process.env.PORT || 3002,()=>{
     console.log("Server is connected");
