@@ -28,18 +28,19 @@ try {
   let resultArray = await productModel.aggregate([
   {
     $group: {
-      _id: "$category", // Products ko category ke hisaab se group karna
-      products: { $push: "$$ROOT" } // Saare product documents ko products array mein push karna
-    }
+      _id: "$category", // Directly use category field for grouping
+      products: { $push: "$$ROOT" }, // Push all product details in an array
+    },
   },
   {
     $project: {
-      _id: 0, // _id ko hide karna (optional)
-      category: "$_id", // _id ko category ke naam se rename karna
-      products: 1 // products array ko retain karna
-    }
-  }
+      _id: 0, // Hide the _id field
+      category: "$_id", // Rename _id to category
+      products: 1, // Keep the products array
+    },
+  },
 ]);
+
 
   
   //res.send(resultArray);
