@@ -11,6 +11,7 @@ const { validateAdmin }= require('../middlewares/admin');
 router.get('/create',(req,res)=>{
      res.render("adminRegister");
 });
+if(typeof process.env.NODE_ENV !== undefined && process.env.NODE_ENV === "DEVELOPMENT"){
 router.post('/create', async (req, res) => {
   try {
        console.log("Request Body",req.body);
@@ -50,7 +51,7 @@ router.post('/create', async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-
+}
 
 // Render login page
 router.get('/login', (req, res) => {
