@@ -10,7 +10,7 @@ const { validateAdmin ,userIsLoggedIn}= require('../middlewares/admin');
 router.get('/',userIsLoggedIn,async(req,res)=>{
   let somethingInCart = false;
 try {
-  /*let resultArray = await productModel.aggregate([
+ /* let resultArray = await productModel.aggregate([
     {
       $group: {
         _id: "$category",
@@ -28,21 +28,19 @@ try {
   let resultArray = await productModel.aggregate([
   {
     $group: {
-      _id: "$category", // Directly use category field for grouping
-      products: { $push: "$$ROOT" }, // Push all product details in an array
-    },
+      _id: "$category", // Products ko category ke hisaab se group karna
+      products: { $push: "$$ROOT" } // Saare product documents ko products array mein push karna
+    }
   },
   {
     $project: {
-      _id: 0, // Hide the _id field
-      category: "$_id", // Rename _id to category
-      products: 1, // Keep the products array
-    },
-  },
+      _id: 0, // _id ko hide karna (optional)
+      category: "$_id", // _id ko category ke naam se rename karna
+      products: 1 // products array ko retain karna
+    }
+  }
 ]);
 
-
-  
   //res.send(resultArray);
 
   // Check if session and user exist
@@ -74,11 +72,40 @@ try {
     return acc;
   }, {});
   */
-  let originalRes = resultArray.reduce((acc, current) => {
+ /* let originalRes = resultArray.reduce((acc, current) => {
   acc[current.category] = current.products; // Use `category` instead of `_id` if renamed
   return acc;
+}, {});*/
+let categoryNames = await categoryModel.find({ 
+  _id: { $in: resultArray.map(item => item.category) } 
+});
+
+// Map category name to category ID in resultArray
+let updatedResultArray = resultArray.map(item => {
+  let categoryName = categoryNames.find(cat => cat._id.toString() === item.category.toString())?.name;
+  return {
+    ...item,
+    category: categoryName || 'Unknown' // If category not found, use 'Unknown'
+  };
+});
+
+// Now, use reduce to group products by category name
+let originalRes = updatedResultArray.reduce((acc, current) => {
+  acc[current.category] = current.products; // Use category name here
+  return acc;
 }, {});
-//console.log(originalRes);
+
+
+
+
+/*let originalRes = resultArray.reduce((acc, current) => {
+  acc[current.category] = current.products;
+  return acc;
+}, {});*/
+
+
+
+console.log(originalRes);
 
   let cartCount = cart && cart.products ? cart.products.length : 0;
 
@@ -87,8 +114,6 @@ try {
   console.error('Error in the aggregation or database query:', err);
   res.status(500).send('Server Error');
 }
-
-
 });
 router.get('/delete/:id',validateAdmin,async (req,res)=>{
    if(req.user.admin){
