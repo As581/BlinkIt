@@ -39,9 +39,12 @@ router.post('/create/orderId', async (req, res) => {
   */
   let cart = await cartModel.findOne();
 
-// Ensure cart.TotalPrice is in rupees, and convert it to paise
+// Check if TotalPrice is in rupees or paise
+let priceInPaise = (cart.TotalPrice % 1 === 0) ? Math.round(Number(cart.TotalPrice) * 100) : cart.TotalPrice;
+
+// Razorpay options with correct price
 const options = {
-  amount: Math.round(Number(cart.TotalPrice) * 100), // Convert rupees to paise
+  amount: priceInPaise, // Amount in paise
   currency: "INR",
 };
 
