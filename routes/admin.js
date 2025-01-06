@@ -59,7 +59,7 @@ router.get('/login', (req, res) => {
 });
 
 // Handle login
-router.post('/login', async (req, res) => {
+router.post('/login', validateAdmin,async (req, res) => {
   const { email, password } = req.body;
 
   try {
