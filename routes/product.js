@@ -230,7 +230,7 @@ router.get('/delete/:id',validateAdmin,async (req,res)=>{
   }
 });*/
 
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/',validateAdmin,upload.single('image'), async (req, res) => {
   try {
     const { name, price, stocks, description, category } = req.body;
 
