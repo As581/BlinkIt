@@ -3,8 +3,8 @@ const { createClient } = require('redis');
 const client = createClient({
     password: process.env.REDIS_PASSWORD,
     socket: {
-        host: 'redis-13221.c212.ap-south-1-1.ec2.redns.redis-cloud.com',
-        port: 13221,
+        host: 'redis-16605.c62.us-east-1-4.ec2.redns.redis-cloud.com:16605',
+        port: 16605,
         connectTimeout: 10000 // 10 seconds timeout
     }
 });
